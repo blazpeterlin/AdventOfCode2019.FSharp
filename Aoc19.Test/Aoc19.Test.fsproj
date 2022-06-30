@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+
+    <IsPackable>false</IsPackable>
+    <GenerateProgramFile>false</GenerateProgramFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="T01.fs" />
+    <Compile Include="T02.fs" />
+    <Compile Include="T03.fs" />
+    <Compile Include="T04.fs" />
+    <Compile Include="T05.fs" />
+    <Compile Include="TestTemplate.fs" />
+    <Compile Include="Program.fs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.1.0" />
+    <PackageReference Include="NUnit" Version="3.13.3" />
+    <PackageReference Include="NUnit3TestAdapter" Version="4.2.1" />
+    <PackageReference Include="NUnit.Analyzers" Version="3.3.0" />
+    <PackageReference Include="coverlet.collector" Version="3.1.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Aoc19.D01\Aoc19.D01.fsproj" />
+    <ProjectReference Include="..\Aoc19.D02\Aoc19.D02.fsproj" />
+    <ProjectReference Include="..\Aoc19.D03\Aoc19.D03.fsproj" />
+    <ProjectReference Include="..\Aoc19.D04\Aoc19.D04.fsproj" />
+    <ProjectReference Include="..\Aoc19.D05\Aoc19.D05.fsproj" />
+  </ItemGroup>
+
+</Project>
