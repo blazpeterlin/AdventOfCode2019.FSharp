@@ -1,4 +1,4 @@
-﻿module D04
+﻿module D04.Solution
 
 open Aoc19
 open Aoc19.Common

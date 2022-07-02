@@ -1,7 +1,7 @@
 module Aoc19.T04
 
 open NUnit.Framework
-open D04
+open D04.Solution
 
 [<SetUp>]
 let Setup () =

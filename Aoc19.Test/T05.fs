@@ -2,7 +2,7 @@ module Aoc19.T05
 
 open NUnit.Framework
 open D05.Solution
-open D05.IntCode
+open Aoc19.IntCode
 
 [<SetUp>]
 let Setup () =
@@ -14,11 +14,11 @@ let TestInputOutput () =
     let createIC _ = "3,0,4,0,99" |> parseIntCode
 
     for num in ([1..9] |> Seq.map int64) do
-        let q = System.Collections.Generic.Queue<int64>()
-        let ic = { createIC() with input = seq [ num ] ; output = q.Enqueue }
+        //let q = System.Collections.Generic.Queue<int64>()
+        let ic,q = initStreams (createIC()) (seq [ num ])
         ic |> runUntilHalt
 
-        Assert.That(q.Dequeue(), Is.EqualTo(num))
+        Assert.That(q.consumeElt(), Is.EqualTo(num))
     Assert.Pass()
 
 
@@ -40,13 +40,13 @@ let TestEqualTo () =
     for num in 1..9 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num=8 then 1 else 0))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
         
     let ic_immmode = "3,3,1108,-1,8,3,4,3,99" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num=8 then 1 else 0))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
 
     Assert.Pass()
     
@@ -57,13 +57,13 @@ let TestLessThan () =
     for num in 1..9 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num<8 then 1 else 0))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
         
     let ic_immmode = "3,3,1107,-1,8,3,4,3,99" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num<8 then 1 else 0))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
 
     Assert.Pass()
     
@@ -74,13 +74,13 @@ let TestJump () =
     for num in -5..5 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num=0 then 0 else 1))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
         
     let ic_immmode = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1" |> parseIntCode
     for num in -5..5 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
         let icf = ic0 |> runUntilHalt
-        Assert.That(q.Peek(), Is.EqualTo(if num=0 then 0 else 1))
+        Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
     
     Assert.Pass()
     
@@ -101,6 +101,6 @@ let TestComplexScenario () =
             | 8 -> 1000
             | x when x >8 -> 1001
 
-        Assert.That(q.Peek(), Is.EqualTo(expectedRes))
+        Assert.That(q.consumeElt(), Is.EqualTo(expectedRes))
 
     Assert.Pass()

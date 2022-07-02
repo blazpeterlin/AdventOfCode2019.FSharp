@@ -1,7 +1,7 @@
 module Aoc19.T03
 
 open NUnit.Framework
-open D03
+open D03.Solution
 open Aoc19.Common
 
 [<SetUp>]

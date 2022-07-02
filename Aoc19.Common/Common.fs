@@ -16,13 +16,17 @@ module Input =
         | [] -> []
         | [""] -> []
         | [x] -> [x]
-        | head :: tail -> head :: skipLastEmpty(tail)
+        | head :: tail -> 
+            let skippedTail = skipLastEmpty(tail)
+            match head, skippedTail with
+            | "", [] -> []
+            | _ -> head :: skippedTail
 
     let env2f env = env |> function | T -> "t.txt" | P -> "p.txt"
     let f2text fpath = fpath |> File.ReadAllText
     let f2lines fpath = fpath |> File.ReadAllLines |> List.ofSeq |> skipLastEmpty
     let text2tokens (splitCh:string) (text:string) = text.Split(splitCh.ToCharArray()) |> List.ofArray
-    let text2lines (text:string) = text.Split("\r\n") |> List.ofArray
+    let text2lines (text:string) = text.Split("\r\n") |> List.ofArray |> skipLastEmpty
     let f2tokens splitCh fpath = fpath |> f2text |> text2tokens splitCh
 
 
@@ -45,9 +49,3 @@ module Common =
         let head = enumerator.Current
         
         head
-
-    let q2seq (q: 'T System.Collections.Generic.Queue) =
-        seq {
-            while q.Count>0 do
-                yield q.Dequeue()
-        }

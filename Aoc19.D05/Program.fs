@@ -5,7 +5,7 @@ open Aoc19.Common
 open Aoc19.Input
 open Aoc19.Operators
 
-open D05.IntCode
+open IntCode
 
 let env = P
 let parse = parseIntCode
@@ -30,7 +30,7 @@ let solve2 text =
     let (ic0,q) = initStreams ic_init (seq [ 5 ])
     let icf = ic0 |> runUntilHalt
 
-    let output = q.Dequeue()
+    let output = q.consumeElt()
 
     output
 
