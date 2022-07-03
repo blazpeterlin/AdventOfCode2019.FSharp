@@ -15,7 +15,7 @@ let solve1 text =
 
     let q = System.Collections.Generic.Queue<int64>()
     let (ic0,q) = initStreams ic_init (seq [ 1 ])
-    let icf = ic0 |> runUntilHalt
+    let icf = ic0 |> runUntilHalt |> ics2codes
 
     let output = q |> q2seq |> List.ofSeq
     if output |> List.take (output.Length-1) |> List.exists (fun x -> x<>0) then failwith "intcode test fail" else
@@ -28,7 +28,7 @@ let solve2 text =
 
     let q = System.Collections.Generic.Queue<int64>()
     let (ic0,q) = initStreams ic_init (seq [ 5 ])
-    let icf = ic0 |> runUntilHalt
+    let icf = ic0 |> runUntilHalt |> ics2codes
 
     let output = q.consumeElt()
 

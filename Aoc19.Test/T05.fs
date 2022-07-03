@@ -26,7 +26,7 @@ let TestInputOutput () =
 let TestArgModes () =
     
     let ic0 = "1002,4,3,4,33" |> parseIntCode
-    let icf = ic0 |> runUntilHalt
+    let icf = ic0 |> runUntilHalt |> ics2codes
 
     Assert.That(icf[4], Is.EqualTo(99))
 
@@ -39,13 +39,13 @@ let TestEqualTo () =
     let ic_posmode = "3,9,8,9,10,9,4,9,99,-1,8" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
         
     let ic_immmode = "3,3,1108,-1,8,3,4,3,99" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
 
     Assert.Pass()
@@ -56,13 +56,13 @@ let TestLessThan () =
     let ic_posmode = "3,9,7,9,10,9,4,9,99,-1,8" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
         
     let ic_immmode = "3,3,1107,-1,8,3,4,3,99" |> parseIntCode
     for num in 1..9 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
 
     Assert.Pass()
@@ -73,13 +73,13 @@ let TestJump () =
     let ic_posmode = "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9" |> parseIntCode
     for num in -5..5 do
         let ic0,q = initStreams ic_posmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
         
     let ic_immmode = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1" |> parseIntCode
     for num in -5..5 do
         let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
     
     Assert.Pass()
@@ -93,7 +93,7 @@ let TestComplexScenario () =
     let ic = text |> parseIntCode
     for num in 0..10 do
         let ic0,q = initStreams ic (seq [int64 num])
-        let icf = ic0 |> runUntilHalt
+        let icf = ic0 |> runUntilHalt |> ics2codes
 
         let expectedRes = 
             match num with

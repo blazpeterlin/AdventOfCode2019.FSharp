@@ -38,7 +38,7 @@ let TestRunUntilHalt () =
 
     let assert0toN str0 strN =
         let expected = parse strN
-        let actual = str0 |> parse |> runUntilHalt
+        let actual = str0 |> parse |> runUntilHalt |> ics2codes
         Assert.That(actual, Is.EqualTo expected.codes)
 
     assert0toN "1,0,0,0,99" "2,0,0,0,99"

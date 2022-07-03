@@ -4,15 +4,29 @@ open Aoc19
 open Aoc19.Common
 open Aoc19.Input
 open Aoc19.Operators
+open System.Threading.Tasks
+open System
 
-type QueuedEventOutput<'T>(ev:IEvent<'T>) =
+type QueuedEventOutput<'T>(ev0:IEvent<'T>) =
     let q = System.Collections.Generic.Queue<'T>()
-    let outputEvent = "wtf"
+    let mutable evs : IEvent<'T> list = []
+    let innerEv = Event<'T>()
+    let innerEvDone = Event<unit>()
+
+    let addEventInternal (ev:IEvent<'T>) =
+        evs <- ev::evs
+        ev.Add (fun t -> 
+            innerEv.Trigger t
+        )
 
     do
-        ev.Add (fun t -> 
-            q.Enqueue t
-        )
+        innerEv.Publish.Add (fun t -> q.Enqueue t; innerEvDone.Trigger())
+        addEventInternal ev0
+
+    member this.addEvent (ev) = addEventInternal ev
+
+    member this.addBeforeRun (signal: 'T) =
+        q.Enqueue signal
 
     member this.count : int =
         q.Count
@@ -22,10 +36,21 @@ type QueuedEventOutput<'T>(ev:IEvent<'T>) =
         then 
             q.Dequeue()
         else
-            Async.AwaitEvent ev |> Async.RunSynchronously |> ignore
+            //// TODO: why does AwaitEvent not work ..?
+            //Async.AwaitEvent innerEvDone.Publish |> Async.RunSynchronously |> ignore
+            async {
+                while q.Count=0 do
+                    Task.Delay(TimeSpan.FromTicks 500) |> Async.AwaitTask |> ignore
+            } |> Async.RunSynchronously
             q.Dequeue() 
 
-    new (s:'T seq) as this =
+    member this.consumeAllElts() : 'T seq =
+        seq {
+            while this.count>0 do
+                yield this.consumeElt()
+        }
+
+    new (s:'T seq) =
         let ev = Event<'T>()
         QueuedEventOutput(ev.Publish)
         then
@@ -33,7 +58,8 @@ type QueuedEventOutput<'T>(ev:IEvent<'T>) =
 
 
 type OpCode = ADD | MUL | END | INPUT | OUTPUT | JMPT | JMPF | LT | EQ
-type IntCodeState = { codes:Map<int,int64>; pos:int; input:QueuedEventOutput<int64>; output:Event<int64> }
+type IntCodeState = { codes:Map<int,int64>; pos:int; input:QueuedEventOutput<int64>; output:Event<int64> option }
+
 
 module IntCode =
 
@@ -77,7 +103,7 @@ module IntCode =
             | INPUT -> 
                 let inp = input.consumeElt()
                 codes |> Map.add (int codes[pos+1]) inp , pos+2
-            | OUTPUT -> codes[argpos1()] |> output.Trigger ; codes , pos+2
+            | OUTPUT -> codes[argpos1()] |> output.Value.Trigger ; codes , pos+2
             | JMPT -> 
                 let jmpPos = if codes[argpos1()]<>0 then (int codes[argpos2()]) else pos+3
                 codes, jmpPos
@@ -93,25 +119,24 @@ module IntCode =
             | _ -> codes,pos
         Some { st with codes=newCodes; pos=newPos }
 
-
     let parseIntCode text =
         let tkns = text |> text2tokens ","
         let nums = tkns |> List.map int64
         let m = nums |> List.indexed |> Map.ofList
-        { codes=m; pos=0; input=Seq.empty|>QueuedEventOutput; output=Event<int64>() }
+        { codes=m; pos=0; input=Seq.empty|>QueuedEventOutput; output=None }
 
     let initStreams ic (inputSeq:int64 seq) =
-        let output = Event<int64>()
-        let outputQ = output.Publish |> QueuedEventOutput
-        let ic0 = { ic with input = inputSeq|>QueuedEventOutput; output = output }
+        let ic0 = { ic with input = inputSeq |> QueuedEventOutput; output= Event<int64>()|>Some }
+        let outputQ = ic0.output.Value.Publish |> QueuedEventOutput
         (ic0, outputQ)
 
+    //let changeInputToEvent (icsTo:IntCodeState) (event:Event<int64>)  =
+    //    { icsTo with input = event.Publish |> QueuedEventOutput }
 
-    //let parameterize p1 p2 map = map |> Map.add 1 p1 |> Map.add 2 p2
-    let runUntilHalt st = st |> Common.unfold step |> Seq.last |> fun st -> st.codes
-    //let getResult (m:Map<int,int64>) = m[0]
+    let runUntilHalt st = st |> Common.unfold step |> Seq.last
+    let ics2codes st = st.codes
+    let ics2output ics = ics.output.Value.Publish |> QueuedEventOutput
 
-    
     let q2seq (q: 'T QueuedEventOutput) =
         seq {
             while q.count>0 do

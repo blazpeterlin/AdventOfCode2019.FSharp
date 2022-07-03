@@ -14,6 +14,9 @@ EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Aoc19.D02", "Aoc19.D02\Aoc19.D02.fsproj", "{84B9DBB0-E3FA-420B-A499-BFE0D9D35EE5}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{8B01BED3-6FD2-4B14-96CC-B9871FF5EDFA}"
+	ProjectSection(SolutionItems) = preProject
+		Aoc19.D07\Program.fs = Aoc19.D07\Program.fs
+	EndProjectSection
 EndProject
 Project("{6EC3EE1D-3C4E-46DD-8F32-0CC8E7565705}") = "Aoc19.Test", "Aoc19.Test\Aoc19.Test.fsproj", "{6F92B48F-CA3F-4A2A-BBAC-FCEBF55AD084}"
 EndProject
