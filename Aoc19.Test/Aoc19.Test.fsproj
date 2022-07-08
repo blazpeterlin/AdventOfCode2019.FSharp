@@ -15,6 +15,7 @@
     <Compile Include="T05.fs" />
     <Compile Include="T06.fs" />
     <Compile Include="T07.fs" />
+    <Compile Include="T08.fs" />
     <Compile Include="TestTemplate.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
@@ -35,6 +36,7 @@
     <ProjectReference Include="..\Aoc19.D05\Aoc19.D05.fsproj" />
     <ProjectReference Include="..\Aoc19.D06\Aoc19.D06.fsproj" />
     <ProjectReference Include="..\Aoc19.D07\Aoc19.D07.fsproj" />
+    <ProjectReference Include="..\Aoc19.D08\Aoc19.D08.fsproj" />
   </ItemGroup>
 
 </Project>
