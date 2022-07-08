@@ -6,18 +6,14 @@ open D01.Solution
 [<SetUp>]
 let Setup () =
     ()
+    
+[<TestCase(12, ExpectedResult=2)>]
+[<TestCase(14, ExpectedResult=2)>]
+[<TestCase(1969, ExpectedResult=654)>]
+[<TestCase(100756, ExpectedResult=33583)>]
+let TestReqFuel input = reqFuel input
 
-[<Test>]
-let Test1 () =
-    Assert.AreEqual(2, reqFuel 12)
-    Assert.AreEqual(2, reqFuel 14)
-    Assert.AreEqual(654, reqFuel 1969)
-    Assert.AreEqual(33583, reqFuel 100756)
-    Assert.Pass()
-
-[<Test>]
-let Test2 () =
-    Assert.AreEqual(2, reqTotalFuel 14)
-    Assert.AreEqual(966, reqTotalFuel 1969)
-    Assert.AreEqual(50346, reqTotalFuel 100756)
-    Assert.Pass()
+[<TestCase(14, ExpectedResult=2)>]
+[<TestCase(1969, ExpectedResult=966)>]
+[<TestCase(100756, ExpectedResult=50346)>]
+let TestReqTotalFuel input = reqTotalFuel input

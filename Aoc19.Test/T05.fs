@@ -33,55 +33,35 @@ let TestArgModes () =
     Assert.Pass()
 
     
-[<Test>]
-let TestEqualTo () =
-    
-    let ic_posmode = "3,9,8,9,10,9,4,9,99,-1,8" |> parseIntCode
+[<TestCase("3,9,8,9,10,9,4,9,99,-1,8", TestName="TestEqualTo_PositionMode")>]
+[<TestCase("3,3,1108,-1,8,3,4,3,99", TestName="TestEqualTo_ImmediateMode")>]
+let TestEqualTo (text:string) =
+    let ic = text |> parseIntCode
     for num in 1..9 do
-        let ic0,q = initStreams ic_posmode (seq [int64 num])
+        let ic0,q = initStreams ic (seq [int64 num])
         let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
-        
-    let ic_immmode = "3,3,1108,-1,8,3,4,3,99" |> parseIntCode
-    for num in 1..9 do
-        let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt |> ics2codes
-        Assert.That(q.consumeElt(), Is.EqualTo(if num=8 then 1 else 0))
-
     Assert.Pass()
     
-[<Test>]
-let TestLessThan () =
-    
-    let ic_posmode = "3,9,7,9,10,9,4,9,99,-1,8" |> parseIntCode
+[<TestCase("3,9,7,9,10,9,4,9,99,-1,8", TestName="TestLessThan_PositionMode")>]
+[<TestCase("3,3,1107,-1,8,3,4,3,99", TestName="TestLessThan_ImmediateMode")>]
+let TestLessThan (text:string) =
+    let ic = text |> parseIntCode
     for num in 1..9 do
-        let ic0,q = initStreams ic_posmode (seq [int64 num])
+        let ic0,q = initStreams ic (seq [int64 num])
         let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
-        
-    let ic_immmode = "3,3,1107,-1,8,3,4,3,99" |> parseIntCode
-    for num in 1..9 do
-        let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt |> ics2codes
-        Assert.That(q.consumeElt(), Is.EqualTo(if num<8 then 1 else 0))
-
     Assert.Pass()
     
     
-[<Test>]
-let TestJump () =
-    let ic_posmode = "3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9" |> parseIntCode
+[<TestCase("3,12,6,12,15,1,13,14,13,4,13,99,-1,0,1,9", TestName="TestJump_PositionMode")>]
+[<TestCase("3,3,1105,-1,9,1101,0,0,12,4,12,99,1", TestName="TestJump_ImmediateMode")>]
+let TestJump (text:string) =
+    let ic = text |> parseIntCode
     for num in -5..5 do
-        let ic0,q = initStreams ic_posmode (seq [int64 num])
+        let ic0,q = initStreams ic (seq [int64 num])
         let icf = ic0 |> runUntilHalt |> ics2codes
         Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
-        
-    let ic_immmode = "3,3,1105,-1,9,1101,0,0,12,4,12,99,1" |> parseIntCode
-    for num in -5..5 do
-        let ic0,q = initStreams ic_immmode (seq [int64 num])
-        let icf = ic0 |> runUntilHalt |> ics2codes
-        Assert.That(q.consumeElt(), Is.EqualTo(if num=0 then 0 else 1))
-    
     Assert.Pass()
     
 [<Test>]

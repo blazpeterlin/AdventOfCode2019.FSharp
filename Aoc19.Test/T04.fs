@@ -7,20 +7,16 @@ open D04.Solution
 let Setup () =
     ()
 
-[<Test>]
-let TestCandidate () =
-
-    Assert.That(isCandidate 111111, Is.True)
-    Assert.That(isCandidate 223450, Is.False)
-    Assert.That(isCandidate 123789, Is.False)
-
+[<TestCase(111111, true)>]
+[<TestCase(223450, false)>]
+[<TestCase(123789, false)>]
+let TestCandidate (num:int) (result:bool) =
+    Assert.That(isCandidate num, Is.EqualTo result)
     Assert.Pass()
-
-[<Test>]
-let TestCandidate2 () =
-
-    Assert.That(isCandidate2 112233, Is.True)
-    Assert.That(isCandidate2 123444, Is.False)
-    Assert.That(isCandidate2 111122, Is.True)
-
+    
+[<TestCase(112233, true)>]
+[<TestCase(123444, false)>]
+[<TestCase(111122, true)>]
+let TestCandidate2 (num:int) (result:bool) =
+    Assert.That(isCandidate2 num, Is.EqualTo result)
     Assert.Pass()
